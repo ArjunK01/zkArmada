@@ -8,6 +8,7 @@ import ShipPicker from "./ShipPicker";
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
+  gap: 50px;
 `;
 const MainSection = () => {
   const { userBoard, otherBoard, gameState } = useContext(GamesContext);
