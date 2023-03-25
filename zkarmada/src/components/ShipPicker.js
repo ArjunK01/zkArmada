@@ -26,7 +26,27 @@ const Ship = styled.div`
     cursor: pointer;
   }
 `;
-const ShipPicker = ({ setSetupBoard, currentShip, setCurrentShip }) => {
+
+const RotateButton = styled.div`
+  padding: 8px 12px;
+  background-color: #025066;
+  color: white;
+  cursor: pointer;
+  display: inline-block;
+  border-radius: 5px;
+  margin-top: 24px;
+
+  &:hover {
+    background-color: #014255;
+  }
+`;
+
+const ShipPicker = ({
+  setSetupBoard,
+  currentShip,
+  setCurrentShip,
+  setHorizontal,
+}) => {
   const [ships, setShips] = useState(new Set([2, 3, 3, 4, 5]));
   const [positions, setPositions] = useState({});
 
@@ -43,6 +63,9 @@ const ShipPicker = ({ setSetupBoard, currentShip, setCurrentShip }) => {
           </Ship>
         ))}
       </ShipsContainer>
+      <RotateButton onClick={() => setHorizontal((h) => !h)}>
+        Rotate
+      </RotateButton>
     </Container>
   );
 };

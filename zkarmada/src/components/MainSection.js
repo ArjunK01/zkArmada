@@ -4,6 +4,7 @@ import { GamesContext, gameStates } from "../GameContext.js";
 
 import styled from "styled-components";
 import ShipPicker from "./ShipPicker";
+import Carrier from "./Carrier";
 
 const Container = styled.div`
   display: flex;
@@ -17,7 +18,7 @@ const MainSection = () => {
   const [setupBoard, setSetupBoard] = useState([...userBoard]);
   const [currentShip, setCurrentShip] = useState(null);
 
-  const [horizontal, setHorizonal] = useState(true);
+  const [horizontal, setHorizontal] = useState(true);
 
   return (
     <Container>
@@ -26,13 +27,14 @@ const MainSection = () => {
         info={setupBoard}
         setSetupBoard={setSetupBoard}
         currentShip={currentShip}
-        horizontal={true}
+        horizontal={horizontal}
       />
       {gameState === gameStates.choosing_ships ? (
         <ShipPicker
           setSetupBoard={setSetupBoard}
           currentShip={currentShip}
           setCurrentShip={setCurrentShip}
+          setHorizontal={setHorizontal}
         />
       ) : (
         <Board info={otherBoard} />
