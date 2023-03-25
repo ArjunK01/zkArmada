@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import Board from "./Board";
 import { GamesContext, gameStates } from "../GameContext.js";
 
@@ -10,14 +10,30 @@ const Container = styled.div`
   justify-content: space-between;
   gap: 50px;
 `;
+
 const MainSection = () => {
   const { userBoard, otherBoard, gameState } = useContext(GamesContext);
 
+  const [setupBoard, setSetupBoard] = useState([...userBoard]);
+  const [currentShip, setCurrentShip] = useState(null);
+
+  const [horizontal, setHorizonal] = useState(true);
+
   return (
     <Container>
-      <Board info={userBoard} />
+      <Board
+        user={true}
+        info={setupBoard}
+        setSetupBoard={setSetupBoard}
+        currentShip={currentShip}
+        horizontal={true}
+      />
       {gameState === gameStates.choosing_ships ? (
-        <ShipPicker />
+        <ShipPicker
+          setSetupBoard={setSetupBoard}
+          currentShip={currentShip}
+          setCurrentShip={setCurrentShip}
+        />
       ) : (
         <Board info={otherBoard} />
       )}
