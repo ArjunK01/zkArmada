@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
+import { GamesContext } from "../GameContext";
 import Carrier from "./Carrier";
 
 const Container = styled.div`
@@ -75,7 +76,9 @@ const ShipPicker = ({
   setCurrentShip,
   setHorizontal,
   availableShips,
+  submitBoard,
 }) => {
+  const { setBoard } = useContext(GamesContext);
   return (
     <Container>
       <Header>Place your ships</Header>
@@ -95,7 +98,7 @@ const ShipPicker = ({
           Rotate
         </RotateButton>
       ) : (
-        <SubmitButton>Submit</SubmitButton>
+        <SubmitButton onClick={() => submitBoard()}>Submit</SubmitButton>
       )}
     </Container>
   );

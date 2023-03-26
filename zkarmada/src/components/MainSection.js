@@ -16,9 +16,10 @@ const Container = styled.div`
 `;
 
 const MainSection = () => {
-  const { userBoard, otherBoard, gameState } = useContext(GamesContext);
+  const { userBoard, otherBoard, gameState, setBoard } =
+    useContext(GamesContext);
 
-  const [setupBoard, setSetupBoard] = useState([...userBoard]);
+  const [setupBoard, setSetupBoard] = useState(new Array(49).fill(0));
   const [currentShip, setCurrentShip] = useState(null);
 
   const [horizontal, setHorizontal] = useState(true);
@@ -57,6 +58,24 @@ const MainSection = () => {
     setCurrentShip(null);
   };
 
+  const submitBoard = () => {
+    let arr = new Array(49).fill(0);
+    for (let ship of staging) {
+      if (ship.horizontal) {
+        for (let i = ship.index; i < ship.index + ship.currentShip; i++) {
+          arr[i] = 1;
+        }
+      } else {
+        let p = ship.index;
+        for (let i = 0; i < ship.currentShip; i++) {
+          arr[p] = 1;
+          p += 7;
+        }
+      }
+    }
+    setBoard(arr);
+  };
+
   return (
     <Container>
       <Board
@@ -75,6 +94,7 @@ const MainSection = () => {
           setCurrentShip={setCurrentShip}
           setHorizontal={setHorizontal}
           availableShips={availableShips}
+          submitBoard={submitBoard}
         />
       ) : (
         <OtherBoard info={otherBoard} />
