@@ -15,7 +15,7 @@ const Container = styled.div`
 `;
 
 const MainSection = () => {
-  const { gameState, setBoard, player1, currentGameData, attack } =
+  const { gameState, setBoard, player1, currentGameData, attack, winner } =
     useContext(GamesContext);
 
   const [setupBoard, setSetupBoard] = useState(new Array(49).fill(0));
@@ -27,8 +27,7 @@ const MainSection = () => {
 
   const [takenIndexes, setTakenIndexes] = useState(new Set());
   const [availableShips, setAvailableShips] = useState(
-    // new Set([2, 3, 6, 4, 5])
-    new Set([2])
+    new Set([2, 3, 6, 4, 5])
   );
 
   const placeShip = (index) => {
@@ -126,6 +125,7 @@ const MainSection = () => {
               : currentGameData.player1_revealed_board
           }
           attack={attack}
+          winner={winner}
         />
       )}
     </Container>

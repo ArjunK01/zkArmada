@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import styled from "styled-components";
+import { GamesContext } from "../GameContext";
 
 const Container = styled.div`
   display: grid;
@@ -32,7 +33,14 @@ const Square = styled.div`
   }
 `;
 
-const OtherBoard = ({ info, disabled, attack }) => {
+const OtherBoard = ({ info, disabled, attack, winner }) => {
+  useEffect(() => {
+    let k = info.filter((i) => i == 1);
+
+    if (k.length == 17) {
+      winner();
+    }
+  }, [info]);
   return (
     <Container>
       {info.map((i, index) => (

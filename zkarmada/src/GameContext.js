@@ -60,6 +60,7 @@ const GamesContextProvider = (props) => {
       setGameState(gameStates.player1_choosing_ships);
     });
     conn.on("data", function (data) {
+      console.log("P1 new info");
       //WHERE PLAYER 1 is GETTING DATA
       if (data.next_game_state === gameStates.game_over_p2win) {
         setGameState(gameStates.game_over_p2win);
@@ -117,6 +118,8 @@ const GamesContextProvider = (props) => {
     peer.on("connection", function (conn) {
       setconn(conn);
       conn.on("data", function (data) {
+        console.log("P2 new info");
+
         let tGameObject = data;
         if (data.next_game_state === gameStates.game_over_p1win) {
           setGameState(gameStates.game_over_p1win);
@@ -319,6 +322,16 @@ const GamesContextProvider = (props) => {
     }
   };
 
+  const winner = () => {
+    if (player1) {
+      setGameState(gameStates.game_over_p1win);
+      conn.send({ next_game_state: gameStates.game_over_p1win });
+    } else {
+      setGameState(gameStates.game_over_p2win);
+      conn.send({ next_game_state: gameStates.game_over_p2win });
+    }
+  };
+
   return (
     <GamesContext.Provider
       value={{
@@ -330,6 +343,7 @@ const GamesContextProvider = (props) => {
         player1,
         currentGameData,
         attack,
+        winner,
       }}
     >
       {props.children}
