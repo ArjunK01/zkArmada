@@ -32,7 +32,7 @@ const Ship = styled.div`
   border: 2px solid white;
   padding: 8px 24px;
   border-radius: 5px;
-  background-color: ${(props) => (props.highlighted ? "#034f66" : null)};
+  background-color: ${(props) => (props.highlighted ? "white" : null)};
   width: ${(props) =>
     props.currentShip * 45 + (props.currentShip - 1) * 5 + 48}px;
   height: (45+16) px;

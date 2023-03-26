@@ -110,9 +110,11 @@ const GamesContextProvider = (props) => {
   const [unlock, setUnlock] = useState(false);
   const [tempindex, settempindex] = useState(null);
 
+  const [id, setid] = useState(null);
   useEffect(() => {
     peer.on("open", function (id) {
       console.log("my peer id ", id);
+      setid(id);
     });
 
     peer.on("connection", function (conn) {
@@ -344,6 +346,7 @@ const GamesContextProvider = (props) => {
         currentGameData,
         attack,
         winner,
+        id,
       }}
     >
       {props.children}

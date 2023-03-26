@@ -13,7 +13,7 @@ const Square = styled.div`
   height: 60px;
   width: 60px;
   background-color: ${(props) =>
-    !props.i ? "#91b5bd" : props.i === 1 ? "green" : "yellow"};
+    !props.i ? "#eaeaea" : props.i === 1 ? "green" : "yellow"};
   opacity: 0.95;
   display: grid;
   place-content: center;
@@ -25,7 +25,7 @@ const Square = styled.div`
     background-color: ${(props) =>
       props.disabled
         ? !props.i
-          ? "#91b5bd"
+          ? "#eaeaea"
           : props.i === 1
           ? "green"
           : "yellow"

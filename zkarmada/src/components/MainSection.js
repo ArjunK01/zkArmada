@@ -7,6 +7,7 @@ import ShipPicker from "./ShipPicker";
 import Carrier from "./Carrier";
 import OtherBoard from "./OtherBoard";
 
+const Outer = styled.div``;
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
@@ -75,6 +76,32 @@ const MainSection = () => {
     setBoard(arr);
   };
 
+  const Big = styled.div`
+    font-size: 32px;
+    font-weight: 500;
+  `;
+
+  const BlackCont = styled.div`
+    padding: 24px;
+    border-radius: 8px;
+    background: rgba(71, 71, 71, 0.8);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(10.5px);
+    -webkit-backdrop-filter: blur(10.5px);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  `;
+  const BlackCont2 = styled.div`
+    margin-top: 32px;
+    padding: 12px;
+    border-radius: 8px;
+    background: rgba(71, 71, 71, 0.8);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(10.5px);
+    -webkit-backdrop-filter: blur(10.5px);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  `;
   if (gameState === gameStates.game_over_p1win && !player1) {
     return <p>Game over you lost!</p>;
   }
@@ -85,50 +112,77 @@ const MainSection = () => {
     return <p>Game over you lost!</p>;
   }
   if (gameState === gameStates.game_over_p1win && !player1) {
-    return <p>Game over you win!</p>;
+    return <Big>Game over you win!</Big>;
   }
 
   if (gameState === gameStates.player1_choosing_ships && !player1)
-    return <div>Waiting for p1 to choose ships</div>;
+    return (
+      <BlackCont>
+        <Big>Waiting for p1 to choose ships...</Big>
+      </BlackCont>
+    );
   if (gameState === gameStates.player2_choosing_ships && player1)
-    return <div>Waiting for p2 to choose ships</div>;
+    return (
+      <BlackCont>
+        <Big>Waiting for p2 to choose ships...</Big>
+      </BlackCont>
+    );
   return (
-    <Container>
-      <Board
-        user={true}
-        info={setupBoard}
-        placeShip={placeShip}
-        currentShip={currentShip}
-        horizontal={horizontal}
-        staging={staging}
-        takenIndexes={takenIndexes}
-      />
-      {(gameState === gameStates.player1_choosing_ships && player1) ||
-      (gameState === gameStates.player2_choosing_ships && !player1) ? (
-        <ShipPicker
-          setSetupBoard={setSetupBoard}
+    <Outer>
+      <Container>
+        <Board
+          user={true}
+          info={setupBoard}
+          placeShip={placeShip}
           currentShip={currentShip}
-          setCurrentShip={setCurrentShip}
-          setHorizontal={setHorizontal}
-          availableShips={availableShips}
-          submitBoard={submitBoard}
-        />
-      ) : (
-        <OtherBoard
-          disabled={
-            (gameState === gameStates.player1_turn && !player1) ||
-            (gameState === gameStates.player2_turn && player1)
-          }
-          info={
+          horizontal={horizontal}
+          staging={staging}
+          takenIndexes={takenIndexes}
+          revealed={
             player1
-              ? currentGameData.player2_revealed_board
-              : currentGameData.player1_revealed_board
+              ? currentGameData.player1_revealed_board
+              : currentGameData.player2_revealed_board
           }
-          attack={attack}
-          winner={winner}
         />
+        {(gameState === gameStates.player1_choosing_ships && player1) ||
+        (gameState === gameStates.player2_choosing_ships && !player1) ? (
+          <ShipPicker
+            setSetupBoard={setSetupBoard}
+            currentShip={currentShip}
+            setCurrentShip={setCurrentShip}
+            setHorizontal={setHorizontal}
+            availableShips={availableShips}
+            submitBoard={submitBoard}
+          />
+        ) : (
+          <OtherBoard
+            disabled={
+              (gameState === gameStates.player1_turn && !player1) ||
+              (gameState === gameStates.player2_turn && player1)
+            }
+            info={
+              player1
+                ? currentGameData.player2_revealed_board
+                : currentGameData.player1_revealed_board
+            }
+            attack={attack}
+            winner={winner}
+          />
+        )}
+      </Container>
+      {gameState === gameStates.player1_turn ||
+      gameState === gameStates.player2_turn ? (
+        <BlackCont2>
+          <div style={{ fontSize: 18 }}>
+            {(gameState === 3 && player1) || (gameState === 4 && !player1)
+              ? "It's Your Turn - Choose Coordinates to Attack"
+              : "Waiting for Opponent..."}
+          </div>
+        </BlackCont2>
+      ) : (
+        "NO"
       )}
-    </Container>
+    </Outer>
   );
 };
 

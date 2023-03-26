@@ -12,7 +12,8 @@ const Container = styled.div`
 const Square = styled.div`
   height: 60px;
   width: 60px;
-  background-color: #91b5bd;
+  background-color: ${(props) =>
+    props.status === 0 ? "#eaeaea" : props.status === 1 ? "red" : "yellow"};
   opacity: 0.95;
   display: grid;
   place-content: center;
@@ -38,6 +39,7 @@ const Board = ({
   horizontal,
   staging,
   takenIndexes,
+  revealed,
 }) => {
   const [hoverIndex, setHoverIndex] = useState(null);
 
@@ -94,7 +96,7 @@ const Board = ({
           onMouseEnter={() => onMouseEnter(index)}
           onMouseLeave={() => onMouseLeave(index)}
           currentShip={currentShip}
-          onClick={() => console.log("CLICK")}
+          status={revealed ? revealed[index] : 0}
         >
           {i ? i : null}
         </Square>
@@ -107,7 +109,10 @@ const Board = ({
           left={(hoverIndex % 7) * 65}
           horizontal={horizontal}
           currentShip={currentShip}
-          onClick={() => placeShip(hoverIndex)}
+          onClick={() => {
+            placeShip(hoverIndex);
+            setHoverIndex(null);
+          }}
         >
           <Carrier size={currentShip} />
         </CarrierContainer>
@@ -117,19 +122,3 @@ const Board = ({
 };
 
 export default Board;
-
-// setSetupBoard((s) => {
-//   let temp = [...s];
-//   if (horizontal) {
-//     for (let i = index; i < currentShip + index; i++) {
-//       temp[i] = currentShip;
-//     }
-//   } else {
-//     let k = index;
-//     for (let i = 0; i < currentShip; i++) {
-//       temp[k] = currentShip;
-//       k += 10;
-//     }
-//   }
-//   return temp;
-// });
