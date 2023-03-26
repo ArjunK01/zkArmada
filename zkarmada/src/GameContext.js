@@ -108,7 +108,21 @@ const GamesContextProvider = (props) => {
   }, []);
 
   const sendmsg = () => {
-    conn.send("NEWMSH");
+    if(player1==true && (gameObject.gameState==gameStates.player2_choosing_ships||
+      gameObject.gameState==gameStates.player2_receiving_key||
+      gameObject.gameState==gameStates.player2_turn||
+      gameObject.gameState==gameStates.player2_to_give_keys)){
+        //pass
+      }
+    else if(player1==false && (gameObject.gameState==gameStates.player1_choosing_ships||
+        gameObject.gameState==gameStates.player1_receiving_key||
+        gameObject.gameState==gameStates.player1_turn||
+        gameObject.gameState==gameStates.player1_to_give_keys)){
+          //pass
+    }else{
+      conn.send(gameObject);
+    }
+    
   };
 
   const setBoard = (arr) => {
