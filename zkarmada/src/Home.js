@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
-import { GamesContext } from "./GameContext";
-
+import MainSection from "./components/MainSection";
+import { GamesContext, gameStates } from "./GameContext";
 
 const Button = styled.div`
   border-radius: 5px;
@@ -14,13 +14,21 @@ const Button = styled.div`
 const Home = () => {
   const [id, setId] = useState("");
 
-  const { connect } = useContext(GamesContext);
+  const { connect, sendmsg, gameState } = useContext(GamesContext);
 
   return (
     <div>
-      <input value={id} onChange={(e) => setId(e.target.value)} />
-      <Button onClick={() => connect(id)}>Connect</Button>
-      {id}
+      {gameState === gameStates.choosing_ships ? (
+        <MainSection />
+      ) : (
+        <div>
+          {" "}
+          <input value={id} onChange={(e) => setId(e.target.value)} />
+          <Button onClick={() => connect(id)}>Connect</Button>
+          {id}
+          <Button onClick={() => sendmsg()}>Sendmsg</Button>
+        </div>
+      )}
     </div>
   );
 };

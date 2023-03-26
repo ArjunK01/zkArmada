@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import Peer from 'peerjs'
+import Peer from "peerjs";
 export const GamesContext = createContext();
 
 const default_board = new Array(49).fill(0);
@@ -17,34 +17,48 @@ const GamesContextProvider = (props) => {
 
   const [gameState, setGameState] = useState(gameStates.your_turn);
 
-  var peer= new Peer()
+  var peer = new Peer();
+
+  const [conn, setconn] = useState(null);
 
   const connect = (id) => {
     //const socket = new WebSocket(`ws://${ip}:8080`); // Replace the port number if necessary
     var conn = peer.connect(id);
+    setconn(conn);
     // on open will be launch when you successfully connect to PeerServer
-    conn.on('open', function(){
+    conn.on("open", function () {
       // here you have conn.id
-      conn.send('hi!');
+      conn.send("hi!");
+      setGameState(gameStates.choosing_ships);
+    });
+    conn.on("data", function (data) {
+      console.log(data);
     });
   };
 
-  useEffect(()=>{
-    peer.on("open",function(id){
-      console.log("my peer id ", id) 
-    })
-
-    peer.on('connection', function(conn) {
-      conn.on('data', function(data){
-        console.log(data);
-      });
+  useEffect(() => {
+    peer.on("open", function (id) {
+      console.log("my peer id ", id);
     });
 
-  },[])
+    peer.on("connection", function (conn) {
+      setconn(conn);
+      conn.on("data", function (data) {
+        setGameState(gameStates.choosing_ships);
+      });
+    });
+  }, []);
 
+  const sendmsg = () => {
+    conn.send("NEWMSH");
+  };
+
+  useEffect(() => {
+    console.log("NEWCONN", conn);
+  }, [conn]);
   return (
     <GamesContext.Provider
-      value={{ otherBoard, userBoard, gameState, connect }}
+      value={{ otherBoard, userBoard, gameState, connect, sendmsg }}
     >
       {props.children}
     </GamesContext.Provider>
