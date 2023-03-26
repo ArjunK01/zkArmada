@@ -103,28 +103,44 @@ const MainSection = () => {
     border: 1px solid rgba(255, 255, 255, 0.18);
   `;
   if (gameState === gameStates.game_over_p1win && !player1) {
-    return <p>Game over you lost!</p>;
+    return (
+      <BlackCont>
+        <Big>Game over you lose!</Big>
+      </BlackCont>
+    );
   }
   if (gameState === gameStates.game_over_p2win && !player1) {
-    return <p>Game over you win!</p>;
+    return (
+      <BlackCont>
+        <Big>Game over you win!</Big>
+      </BlackCont>
+    );
   }
   if (gameState === gameStates.game_over_p2win && player1) {
-    return <p>Game over you lost!</p>;
+    return (
+      <BlackCont>
+        <Big>Game over you lose!</Big>
+      </BlackCont>
+    );
   }
   if (gameState === gameStates.game_over_p1win && !player1) {
-    return <Big>Game over you win!</Big>;
+    return (
+      <BlackCont>
+        <Big>Game over you win!</Big>
+      </BlackCont>
+    );
   }
 
   if (gameState === gameStates.player1_choosing_ships && !player1)
     return (
       <BlackCont>
-        <Big>Waiting for p1 to choose ships...</Big>
+        <Big>Waiting for opponent to choose ships...</Big>
       </BlackCont>
     );
   if (gameState === gameStates.player2_choosing_ships && player1)
     return (
       <BlackCont>
-        <Big>Waiting for p2 to choose ships...</Big>
+        <Big>Waiting for opponent to choose ships...</Big>
       </BlackCont>
     );
   return (

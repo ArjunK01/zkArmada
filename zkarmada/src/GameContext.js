@@ -62,6 +62,9 @@ const GamesContextProvider = (props) => {
     conn.on("data", function (data) {
       console.log("P1 new info");
       //WHERE PLAYER 1 is GETTING DATA
+      if (data.state) {
+        setCurrentGameData(data.state);
+      }
       if (data.next_game_state === gameStates.game_over_p2win) {
         setGameState(gameStates.game_over_p2win);
         return;
@@ -121,6 +124,9 @@ const GamesContextProvider = (props) => {
       setconn(conn);
       conn.on("data", function (data) {
         console.log("P2 new info");
+        if (data.state) {
+          setCurrentGameData(data.state);
+        }
 
         let tGameObject = data;
         if (data.next_game_state === gameStates.game_over_p1win) {
@@ -129,9 +135,6 @@ const GamesContextProvider = (props) => {
         }
 
         setGameState(tGameObject.next_game_state);
-        if (data.state) {
-          setGameState(data.state);
-        }
 
         if (tGameObject.next_game_state === gameStates.player1_receiving_key) {
           settempindex(data.index);
