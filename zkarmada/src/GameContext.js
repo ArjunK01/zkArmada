@@ -17,6 +17,8 @@ const GamesContextProvider = (props) => {
 
   const [gameState, setGameState] = useState(gameStates.your_turn);
 
+  const [currentGameData, setCurrentGameData] = useState({});
+
   var peer = new Peer();
 
   const [conn, setconn] = useState(null);
@@ -29,9 +31,11 @@ const GamesContextProvider = (props) => {
     conn.on("open", function () {
       // here you have conn.id
       conn.send("hi!");
-      setGameState(gameStates.choosing_ships);
+      // setGameState(gameStates.choosing_ships);
     });
     conn.on("data", function (data) {
+      //WHERE PLAYER 1 is GETTING DATA
+      console.log("123");
       console.log(data);
     });
   };
@@ -44,7 +48,11 @@ const GamesContextProvider = (props) => {
     peer.on("connection", function (conn) {
       setconn(conn);
       conn.on("data", function (data) {
-        setGameState(gameStates.choosing_ships);
+        // setGameState(gameStates.choosing_ships);
+        //WHERE PLAYER 2 IS GETTING DATA
+        console.log("456");
+
+        console.log(data);
       });
     });
   }, []);
