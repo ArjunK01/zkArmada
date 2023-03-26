@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { GamesContext } from "./GameContext";
 
+
 const Button = styled.div`
   border-radius: 5px;
   padding: 8px 12px;
@@ -11,15 +12,15 @@ const Button = styled.div`
   cursor: pointer;
 `;
 const Home = () => {
-  const [ip, setIp] = useState("");
+  const [id, setId] = useState("");
 
   const { connect } = useContext(GamesContext);
 
   return (
     <div>
-      <input value={ip} onChange={(e) => setIp(e.target.value)} />
-      <Button onClick={() => connect(ip)}>Connect</Button>
-      {ip}
+      <input value={id} onChange={(e) => setId(e.target.value)} />
+      <Button onClick={() => connect(id)}>Connect</Button>
+      {id}
     </div>
   );
 };

@@ -1,5 +1,5 @@
-import React, { createContext, useState } from "react";
-
+import React, { createContext, useEffect, useState } from "react";
+import Peer from 'peerjs'
 export const GamesContext = createContext();
 
 const default_board = new Array(49).fill(0);
@@ -17,25 +17,30 @@ const GamesContextProvider = (props) => {
 
   const [gameState, setGameState] = useState(gameStates.your_turn);
 
-  const connect = (ip) => {
-    const socket = new WebSocket(`ws://${ip}:8080`); // Replace the port number if necessary
+  var peer= new Peer()
 
-    socket.onopen = function (event) {
-      console.log("Connected to server");
-    };
-
-    socket.onmessage = function (event) {
-      console.log("Received message:", event.data);
-    };
-
-    socket.onerror = function (error) {
-      console.error("WebSocket error:", error);
-    };
-
-    socket.onclose = function (event) {
-      console.log("WebSocket connection closed:", event);
-    };
+  const connect = (id) => {
+    //const socket = new WebSocket(`ws://${ip}:8080`); // Replace the port number if necessary
+    var conn = peer.connect(id);
+    // on open will be launch when you successfully connect to PeerServer
+    conn.on('open', function(){
+      // here you have conn.id
+      conn.send('hi!');
+    });
   };
+
+  useEffect(()=>{
+    peer.on("open",function(id){
+      console.log("my peer id ", id) 
+    })
+
+    peer.on('connection', function(conn) {
+      conn.on('data', function(data){
+        console.log(data);
+      });
+    });
+
+  },[])
 
   return (
     <GamesContext.Provider
