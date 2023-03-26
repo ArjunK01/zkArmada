@@ -41,31 +41,46 @@ const RotateButton = styled.div`
   }
 `;
 
+const SubmitButton = styled.div`
+  padding: 8px 12px;
+  background-color: #027a21;
+  color: white;
+  cursor: pointer;
+  display: inline-block;
+  border-radius: 5px;
+  margin-top: 24px;
+
+  &:hover {
+    background-color: #025d19;
+  }
+`;
+
 const ShipPicker = ({
-  setSetupBoard,
   currentShip,
   setCurrentShip,
   setHorizontal,
+  availableShips,
 }) => {
-  const [ships, setShips] = useState(new Set([2, 3, 3, 4, 5]));
-  const [positions, setPositions] = useState({});
-
   return (
     <Container>
       <Header>Pick your ships</Header>
       <ShipsContainer>
-        {[...ships].map((i) => (
+        {[...availableShips].map((i) => (
           <Ship
             highlighted={i === currentShip}
-            onClick={() => setCurrentShip(i)}
+            onClick={() => setCurrentShip(i === 6 ? 3 : i)}
           >
-            {i}
+            {i === 6 ? 3 : i}
           </Ship>
         ))}
       </ShipsContainer>
-      <RotateButton onClick={() => setHorizontal((h) => !h)}>
-        Rotate
-      </RotateButton>
+      {availableShips.size ? (
+        <RotateButton onClick={() => setHorizontal((h) => !h)}>
+          Rotate
+        </RotateButton>
+      ) : (
+        <SubmitButton>Submit</SubmitButton>
+      )}
     </Container>
   );
 };

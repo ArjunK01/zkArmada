@@ -20,14 +20,50 @@ const MainSection = () => {
 
   const [horizontal, setHorizontal] = useState(true);
 
+  const [staging, setStaging] = useState([]);
+
+  const [takenIndexes, setTakenIndexes] = useState(new Set());
+  const [availableShips, setAvailableShips] = useState(
+    new Set([2, 3, 6, 4, 5])
+  );
+
+  const placeShip = (index) => {
+    setStaging((s) => [...s, { index, currentShip, horizontal }]);
+    let k = new Set([...takenIndexes]);
+    if (horizontal) {
+      for (let i = index; i < currentShip + index; i++) {
+        k.add(i);
+      }
+    } else {
+      let p = index;
+      for (let i = 0; i < currentShip; i++) {
+        k.add(p);
+        p += 10;
+      }
+    }
+    setTakenIndexes(k);
+    setAvailableShips((s) => {
+      let k = new Set([...s]);
+      if (currentShip === 3 && !k.has(3)) {
+        k.delete(6);
+      } else {
+        k.delete(currentShip);
+      }
+      return k;
+    });
+    setCurrentShip(null);
+  };
+
   return (
     <Container>
       <Board
         user={true}
         info={setupBoard}
-        setSetupBoard={setSetupBoard}
+        placeShip={placeShip}
         currentShip={currentShip}
         horizontal={horizontal}
+        staging={staging}
+        takenIndexes={takenIndexes}
       />
       {gameState === gameStates.choosing_ships ? (
         <ShipPicker
@@ -35,6 +71,7 @@ const MainSection = () => {
           currentShip={currentShip}
           setCurrentShip={setCurrentShip}
           setHorizontal={setHorizontal}
+          availableShips={availableShips}
         />
       ) : (
         <Board info={otherBoard} />

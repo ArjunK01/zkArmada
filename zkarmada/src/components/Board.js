@@ -29,7 +29,15 @@ const CarrierContainer = styled.div`
   height: 45px;
 `;
 
-const Board = ({ info, user, setSetupBoard, currentShip, horizontal }) => {
+const Board = ({
+  info,
+  user,
+  placeShip,
+  currentShip,
+  horizontal,
+  staging,
+  takenIndexes,
+}) => {
   const [hoverIndex, setHoverIndex] = useState(null);
 
   const onMouseEnter = (index) => {
@@ -38,6 +46,19 @@ const Board = ({ info, user, setSetupBoard, currentShip, horizontal }) => {
     if (info[index]) return;
     if (horizontal && currentShip + (index % 10) > 10) return;
     if (!horizontal && index + (currentShip - 1) * 10 > 99) return;
+    if (!takenIndexes) return;
+
+    if (horizontal) {
+      for (let i = index; i < index + currentShip; i++) {
+        if (takenIndexes.has(i)) return;
+      }
+    } else {
+      let p = index;
+      for (let i = 0; i < currentShip; i++) {
+        if (takenIndexes.has(p)) return;
+        p += 10;
+      }
+    }
 
     setHoverIndex(index);
   };
@@ -45,6 +66,25 @@ const Board = ({ info, user, setSetupBoard, currentShip, horizontal }) => {
   const onMouseLeave = (index) => {
     if (!user) return;
   };
+
+  const [placedShips, setPlacedShips] = useState([]);
+  useEffect(() => {
+    let temp = [];
+    for (let ship of staging) {
+      temp.push(
+        <CarrierContainer
+          top={Math.floor(ship.index / 10) * 50}
+          left={(ship.index % 10) * 50}
+          horizontal={ship.horizontal}
+          currentShip={ship.currentShip}
+          onClick={() => placeShip(hoverIndex)}
+        >
+          <Carrier size={ship.currentShip} />
+        </CarrierContainer>
+      );
+    }
+    setPlacedShips(temp);
+  }, [staging]);
 
   return (
     <Container>
@@ -58,12 +98,15 @@ const Board = ({ info, user, setSetupBoard, currentShip, horizontal }) => {
           {i ? i : null}
         </Square>
       ))}
+      {placedShips}
+
       {hoverIndex !== null && (
         <CarrierContainer
           top={Math.floor(hoverIndex / 10) * 50}
           left={(hoverIndex % 10) * 50}
           horizontal={horizontal}
           currentShip={currentShip}
+          onClick={() => placeShip(hoverIndex)}
         >
           <Carrier size={currentShip} />
         </CarrierContainer>
