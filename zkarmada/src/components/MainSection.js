@@ -7,7 +7,6 @@ import ShipPicker from "./ShipPicker";
 import Carrier from "./Carrier";
 import OtherBoard from "./OtherBoard";
 
-import img from "../images/bkg.png";
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
@@ -16,8 +15,14 @@ const Container = styled.div`
 `;
 
 const MainSection = () => {
-  const { userBoard, otherBoard, gameState, setBoard } =
-    useContext(GamesContext);
+  const {
+    userBoard,
+    otherBoard,
+    gameState,
+    setBoard,
+    player1,
+    currentGameData,
+  } = useContext(GamesContext);
 
   const [setupBoard, setSetupBoard] = useState(new Array(49).fill(0));
   const [currentShip, setCurrentShip] = useState(null);
@@ -76,6 +81,10 @@ const MainSection = () => {
     setBoard(arr);
   };
 
+  if (gameState === gameStates.player1_choosing_ships && !player1)
+    return <div>Waiting for p1 to choose ships</div>;
+  if (gameState === gameStates.player2_choosing_ships && player1)
+    return <div>Waiting for p2 to choose ships</div>;
   return (
     <Container>
       <Board
@@ -87,7 +96,8 @@ const MainSection = () => {
         staging={staging}
         takenIndexes={takenIndexes}
       />
-      {gameState === gameStates.choosing_ships ? (
+      {(gameState === gameStates.player1_choosing_ships && player1) ||
+      (gameState === gameStates.player2_choosing_ships && !player1) ? (
         <ShipPicker
           setSetupBoard={setSetupBoard}
           currentShip={currentShip}
@@ -97,7 +107,7 @@ const MainSection = () => {
           submitBoard={submitBoard}
         />
       ) : (
-        <OtherBoard info={otherBoard} />
+        <OtherBoard info={currentGameData.player1_revealed_board} />
       )}
     </Container>
   );

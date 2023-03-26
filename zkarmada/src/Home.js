@@ -18,14 +18,13 @@ const Home = () => {
 
   return (
     <div>
-      {gameState === gameStates.choosing_ships ? (
+      {gameState !== gameStates.waiting_for_join ? (
         <MainSection />
       ) : (
         <div>
           {" "}
           <input value={id} onChange={(e) => setId(e.target.value)} />
           <Button onClick={() => connect(id)}>Connect</Button>
-          {id}
           <Button onClick={() => sendmsg()}>Sendmsg</Button>
         </div>
       )}
