@@ -12,8 +12,8 @@ export const gameStates = {
 };
 
 const GamesContextProvider = (props) => {
-  const [userBoard, setUserBoard] = useState([...default_board]);
-  const [otherBoard, setOtherBoard] = useState([...default_board]);
+  const [userBoard, setUserBoard] = useState(null);
+  const [otherBoard, setOtherBoard] = useState(null);
 
   const [gameState, setGameState] = useState(gameStates.your_turn);
 
@@ -31,7 +31,7 @@ const GamesContextProvider = (props) => {
     conn.on("open", function () {
       // here you have conn.id
       conn.send("hi!");
-      // setGameState(gameStates.choosing_ships);
+      setGameState(gameStates.choosing_ships);
     });
     conn.on("data", function (data) {
       //WHERE PLAYER 1 is GETTING DATA
@@ -48,10 +48,10 @@ const GamesContextProvider = (props) => {
     peer.on("connection", function (conn) {
       setconn(conn);
       conn.on("data", function (data) {
-        // setGameState(gameStates.choosing_ships);
+        setGameState(gameStates.choosing_ships);
         //WHERE PLAYER 2 IS GETTING DATA
-        console.log("456");
 
+        console.log("456");
         console.log(data);
       });
     });
@@ -61,12 +61,22 @@ const GamesContextProvider = (props) => {
     conn.send("NEWMSH");
   };
 
+  const setBoard = (arr) => {
+    setUserBoard(arr);
+  };
+
+  const [myencrypted, setmyencrypted] = useState([]);
+
   useEffect(() => {
-    console.log("NEWCONN", conn);
-  }, [conn]);
+    if (!userBoard) return;
+    let arr = [];
+    //ENCRYPTION STUFF
+    setmyencrypted(arr);
+  }, [userBoard]);
+
   return (
     <GamesContext.Provider
-      value={{ otherBoard, userBoard, gameState, connect, sendmsg }}
+      value={{ otherBoard, userBoard, gameState, connect, sendmsg, setBoard }}
     >
       {props.children}
     </GamesContext.Provider>
