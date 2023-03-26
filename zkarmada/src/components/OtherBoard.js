@@ -11,18 +11,39 @@ const Container = styled.div`
 const Square = styled.div`
   height: 60px;
   width: 60px;
-  background-color: #91b5bd;
+  background-color: ${(props) =>
+    !props.i ? "#91b5bd" : props.i === 1 ? "green" : "yellow"};
   opacity: 0.95;
   display: grid;
   place-content: center;
   color: white;
+
+  cursor: ${(props) => (props.disabled ? null : "pointer")};
+
+  &:hover {
+    background-color: ${(props) =>
+      props.disabled
+        ? !props.i
+          ? "#91b5bd"
+          : props.i === 1
+          ? "green"
+          : "yellow"
+        : "#69848A"};
+  }
 `;
 
-const OtherBoard = ({ info }) => {
+const OtherBoard = ({ info, disabled, attack }) => {
   return (
     <Container>
       {info.map((i, index) => (
-        <Square />
+        <Square
+          disabled={disabled || i !== 0}
+          onClick={() => {
+            if (disabled || i !== 0) return;
+            attack(index);
+          }}
+          i={i}
+        ></Square>
       ))}
     </Container>
   );

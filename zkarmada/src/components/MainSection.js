@@ -15,14 +15,8 @@ const Container = styled.div`
 `;
 
 const MainSection = () => {
-  const {
-    userBoard,
-    otherBoard,
-    gameState,
-    setBoard,
-    player1,
-    currentGameData,
-  } = useContext(GamesContext);
+  const { gameState, setBoard, player1, currentGameData, attack } =
+    useContext(GamesContext);
 
   const [setupBoard, setSetupBoard] = useState(new Array(49).fill(0));
   const [currentShip, setCurrentShip] = useState(null);
@@ -33,7 +27,8 @@ const MainSection = () => {
 
   const [takenIndexes, setTakenIndexes] = useState(new Set());
   const [availableShips, setAvailableShips] = useState(
-    new Set([2, 3, 6, 4, 5])
+    // new Set([2, 3, 6, 4, 5])
+    new Set([2])
   );
 
   const placeShip = (index) => {
@@ -81,6 +76,19 @@ const MainSection = () => {
     setBoard(arr);
   };
 
+  if (gameState === gameStates.game_over_p1win && !player1) {
+    return <p>Game over you lost!</p>;
+  }
+  if (gameState === gameStates.game_over_p2win && !player1) {
+    return <p>Game over you win!</p>;
+  }
+  if (gameState === gameStates.game_over_p2win && player1) {
+    return <p>Game over you lost!</p>;
+  }
+  if (gameState === gameStates.game_over_p1win && !player1) {
+    return <p>Game over you win!</p>;
+  }
+
   if (gameState === gameStates.player1_choosing_ships && !player1)
     return <div>Waiting for p1 to choose ships</div>;
   if (gameState === gameStates.player2_choosing_ships && player1)
@@ -107,7 +115,18 @@ const MainSection = () => {
           submitBoard={submitBoard}
         />
       ) : (
-        <OtherBoard info={currentGameData.player1_revealed_board} />
+        <OtherBoard
+          disabled={
+            (gameState === gameStates.player1_turn && !player1) ||
+            (gameState === gameStates.player2_turn && player1)
+          }
+          info={
+            player1
+              ? currentGameData.player2_revealed_board
+              : currentGameData.player1_revealed_board
+          }
+          attack={attack}
+        />
       )}
     </Container>
   );

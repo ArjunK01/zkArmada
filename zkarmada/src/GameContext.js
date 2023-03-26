@@ -15,6 +15,8 @@ export const gameStates = {
   player2_to_give_keys: 6,
   player1_receiving_key: 7,
   player2_receiving_key: 8,
+  game_over_p1win: 9,
+  game_over_p2win: 10,
 };
 
 const gameObject = {
@@ -38,9 +40,11 @@ const GamesContextProvider = (props) => {
   const [currentGameData, setCurrentGameData] = useState({
     player1_revealed_board: new Array(49).fill(0),
     player2_revealed_board: new Array(49).fill(0),
+    p1hits: 0,
+    p2hits: 0,
   });
 
-  var peer = new Peer();
+  const [peer, setPeer] = useState(new Peer());
 
   const [conn, setconn] = useState(null);
 
@@ -57,10 +61,53 @@ const GamesContextProvider = (props) => {
     });
     conn.on("data", function (data) {
       //WHERE PLAYER 1 is GETTING DATA
+      if (data.next_game_state === gameStates.game_over_p2win) {
+        setGameState(gameStates.game_over_p2win);
+        return;
+      }
+      if (data.next_game_state === gameStates.player2_receiving_key) {
+        settempindex(data.index);
+        setUnlock(true);
+      }
+      if (data.next_game_state === gameStates.player1_receiving_key) {
+        let { key, p2rev } = data;
+        let miss = CryptoJS.SHA256(0 + key).toString();
+        let hit = CryptoJS.SHA256(1 + key).toString();
+        let k = [...p2rev];
+
+        if (miss === data.board[data.index]) {
+          k[data.index] = 2;
+        } else {
+          k[data.index] = 1;
+          // if (data.cg.p1hits == 1) {
+          //   conn.send({ next_game_state: gameStates.game_over_p1win });
+          //   setGameState(gameStates.game_over_p1win);
+          //   return;
+          // }
+        }
+
+        let g = {
+          ...data.cg,
+          player2_revealed_board: k,
+          p1hits: miss ? data.cg.p1hits : data.cg.p1hits + 1,
+        };
+        setCurrentGameData(g);
+
+        conn.send({
+          state: g,
+          next_game_state: gameStates.player2_turn,
+        });
+        setGameState(gameStates.player2_turn);
+        return;
+      }
+
       setGameState(data.next_game_state);
       setCurrentGameData((g) => ({ ...g, player2_encrypted_board: data.arr }));
     });
   };
+
+  const [unlock, setUnlock] = useState(false);
+  const [tempindex, settempindex] = useState(null);
 
   useEffect(() => {
     peer.on("open", function (id) {
@@ -71,14 +118,57 @@ const GamesContextProvider = (props) => {
       setconn(conn);
       conn.on("data", function (data) {
         let tGameObject = data;
+        if (data.next_game_state === gameStates.game_over_p1win) {
+          setGameState(gameStates.game_over_p1win);
+          return;
+        }
 
         setGameState(tGameObject.next_game_state);
+        if (data.state) {
+          setGameState(data.state);
+        }
+
+        if (tGameObject.next_game_state === gameStates.player1_receiving_key) {
+          settempindex(data.index);
+          setUnlock(true);
+        }
 
         if (tGameObject.next_game_state === gameStates.player2_choosing_ships) {
           setCurrentGameData((g) => ({
             ...g,
             player1_encrypted_board: data.arr,
           }));
+        }
+        if (data.next_game_state === gameStates.player2_receiving_key) {
+          let { key, p2rev } = data;
+          let miss = CryptoJS.SHA256(0 + key).toString();
+          let hit = CryptoJS.SHA256(1 + key).toString();
+          let k = [...p2rev];
+
+          if (miss === data.board[data.index]) {
+            k[data.index] = 2;
+          } else {
+            k[data.index] = 1;
+            // if (data.cg.p2hits == 1) {
+            //   conn.send({ next_game_state: gameStates.game_over_p2win });
+            //   setGameState(gameStates.game_over_p2win);
+            //   return;
+            // }
+          }
+
+          let g = {
+            ...data.cg,
+            player1_revealed_board: k,
+            p2hits: miss ? data.cg.p2hits : data.cg.p2hits + 1,
+          };
+          setCurrentGameData(g);
+
+          conn.send({
+            state: g,
+            next_game_state: gameStates.player1_turn,
+          });
+          setGameState(gameStates.player1_turn);
+          return;
         }
 
         // setGameState(gameStates.choosing_ships);
@@ -119,34 +209,14 @@ const GamesContextProvider = (props) => {
         // setGameState(tGameObject.game_state);
         // setGameObject(tGameObject);
         console.log("456");
-        console.log(data);
       });
     });
   }, [gameState]);
 
-  useEffect(() => {
-    console.log("GAMESTATE", gameState);
-  }, [gameState]);
+  // useEffect(() => {
+  //   console.log("GAMESTATE", gameState);
+  // }, [gameState]);
   const sendmsg = () => {
-    // if (
-    //   player1 == true &&
-    //   (gameObject.gameState == gameStates.player2_choosing_ships ||
-    //     gameObject.gameState == gameStates.player2_receiving_key ||
-    //     gameObject.gameState == gameStates.player2_turn ||
-    //     gameObject.gameState == gameStates.player2_to_give_keys)
-    // ) {
-    //   //pass
-    // } else if (
-    //   player1 == false &&
-    //   (gameObject.gameState == gameStates.player1_choosing_ships ||
-    //     gameObject.gameState == gameStates.player1_receiving_key ||
-    //     gameObject.gameState == gameStates.player1_turn ||
-    //     gameObject.gameState == gameStates.player1_to_give_keys)
-    // ) {
-    //   //pass
-    // } else {
-    //   conn.send(gameObject);
-    // }
     conn.send("message");
   };
 
@@ -209,8 +279,45 @@ const GamesContextProvider = (props) => {
     } else {
       setGameState(gameStates.player1_turn);
       conn.send({ arr, next_game_state: gameStates.player1_turn });
+      setCurrentGameData((g) => ({ ...g, player2_encrypted_board: arr }));
     }
   }, [userBoard]);
+
+  useEffect(() => {
+    if (!unlock) return;
+    if (!player1 && gameState === gameStates.player1_receiving_key) {
+      conn.send({
+        key: hashUserBoard[tempindex],
+        index: tempindex,
+        next_game_state: gameStates.player1_receiving_key,
+        board: myencrypted,
+        p2rev: currentGameData.player2_revealed_board,
+        cg: currentGameData,
+      });
+    }
+    if (player1 && gameState === gameStates.player2_receiving_key) {
+      conn.send({
+        key: hashUserBoard[tempindex],
+        index: tempindex,
+        next_game_state: gameStates.player2_receiving_key,
+        board: myencrypted,
+        p2rev: currentGameData.player1_revealed_board,
+        cg: currentGameData,
+      });
+    }
+    setUnlock(false);
+  }, [gameState, tempindex, unlock, myencrypted, myencrypted]);
+
+  const attack = (index) => {
+    //need to ask for the other persons key for that index
+    if (player1) {
+      conn.send({ index, next_game_state: gameStates.player1_receiving_key });
+      setGameState(gameStates.player1_receiving_key);
+    } else {
+      conn.send({ index, next_game_state: gameStates.player2_receiving_key });
+      setGameState(gameStates.player2_receiving_key);
+    }
+  };
 
   return (
     <GamesContext.Provider
@@ -222,6 +329,7 @@ const GamesContextProvider = (props) => {
         setBoard,
         player1,
         currentGameData,
+        attack,
       }}
     >
       {props.children}
