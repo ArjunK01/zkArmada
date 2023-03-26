@@ -1,8 +1,18 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import Carrier from "./Carrier";
 
 const Container = styled.div`
   width: 600px;
+
+  padding: 16px;
+  border-radius: 10px;
+  background: rgba(71, 71, 71, 0.8);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(10.5px);
+  -webkit-backdrop-filter: blur(10.5px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
 `;
 
 const Header = styled.div`
@@ -14,30 +24,36 @@ const Header = styled.div`
 const ShipsContainer = styled.div`
   display: flex;
   gap: 12px;
+  flex-wrap: wrap;
 `;
 
 const Ship = styled.div`
-  border: 2px solid #034f66;
+  border: 2px solid white;
   padding: 8px 24px;
   border-radius: 5px;
   background-color: ${(props) => (props.highlighted ? "#034f66" : null)};
+  width: ${(props) =>
+    props.currentShip * 45 + (props.currentShip - 1) * 5 + 48}px;
+  height: (45+16) px;
   &:hover {
-    background-color: #034f66;
+    background-color: white;
     cursor: pointer;
   }
 `;
 
 const RotateButton = styled.div`
   padding: 8px 12px;
-  background-color: #025066;
-  color: white;
+  background-color: white;
+  color: black;
   cursor: pointer;
   display: inline-block;
   border-radius: 5px;
   margin-top: 24px;
+  font-weight: 600;
 
   &:hover {
-    background-color: #014255;
+    background-color: #0f7e7c;
+    color: white;
   }
 `;
 
@@ -48,7 +64,6 @@ const SubmitButton = styled.div`
   cursor: pointer;
   display: inline-block;
   border-radius: 5px;
-  margin-top: 24px;
 
   &:hover {
     background-color: #025d19;
@@ -63,14 +78,15 @@ const ShipPicker = ({
 }) => {
   return (
     <Container>
-      <Header>Pick your ships</Header>
+      <Header>Place your ships</Header>
       <ShipsContainer>
         {[...availableShips].map((i) => (
           <Ship
             highlighted={i === currentShip}
             onClick={() => setCurrentShip(i === 6 ? 3 : i)}
+            currentShip={i === 6 ? 3 : i}
           >
-            {i === 6 ? 3 : i}
+            <Carrier size={i === 6 ? 3 : i} />
           </Ship>
         ))}
       </ShipsContainer>

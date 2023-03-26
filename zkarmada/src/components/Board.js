@@ -4,15 +4,16 @@ import Carrier from "./Carrier";
 
 const Container = styled.div`
   display: grid;
-  grid-template-columns: repeat(10, 45px);
-  grid-template-rows: repeat(10, 45px);
+  grid-template-columns: repeat(7, 60px);
+  grid-template-rows: repeat(7, 60px);
   gap: 5px;
   position: relative;
 `;
 const Square = styled.div`
-  height: 45px;
-  width: 45px;
-  background-color: #8fa0a8;
+  height: 60px;
+  width: 60px;
+  background-color: #91b5bd;
+  opacity: 0.95;
   display: grid;
   place-content: center;
   color: white;
@@ -22,11 +23,11 @@ const Square = styled.div`
 const CarrierContainer = styled.div`
   position: absolute;
   top: ${(props) => props.top + "px"};
-  left: ${(props) => props.left + (!props.horizontal ? 45 : 0) + "px"};
+  left: ${(props) => props.left + (!props.horizontal ? 60 : 0) + "px"};
   transform: ${(props) => (!props.horizontal ? " rotate(90deg)" : null)};
   transform-origin: top left;
-  width: ${(props) => props.currentShip * 45 + (props.currentShip - 1) * 5}px;
-  height: 45px;
+  width: ${(props) => props.currentShip * 60 + (props.currentShip - 1) * 5}px;
+  height: 60px;
 `;
 
 const Board = ({
@@ -44,8 +45,8 @@ const Board = ({
     if (!user) return;
     if (!currentShip) return;
     if (info[index]) return;
-    if (horizontal && currentShip + (index % 10) > 10) return;
-    if (!horizontal && index + (currentShip - 1) * 10 > 99) return;
+    if (horizontal && currentShip + (index % 7) > 7) return;
+    if (!horizontal && index + (currentShip - 1) * 7 > 48) return;
     if (!takenIndexes) return;
 
     if (horizontal) {
@@ -56,7 +57,7 @@ const Board = ({
       let p = index;
       for (let i = 0; i < currentShip; i++) {
         if (takenIndexes.has(p)) return;
-        p += 10;
+        p += 7;
       }
     }
 
@@ -73,8 +74,8 @@ const Board = ({
     for (let ship of staging) {
       temp.push(
         <CarrierContainer
-          top={Math.floor(ship.index / 10) * 50}
-          left={(ship.index % 10) * 50}
+          top={Math.floor(ship.index / 7) * 65}
+          left={(ship.index % 7) * 65}
           horizontal={ship.horizontal}
           currentShip={ship.currentShip}
           onClick={() => placeShip(hoverIndex)}
@@ -102,8 +103,8 @@ const Board = ({
 
       {hoverIndex !== null && (
         <CarrierContainer
-          top={Math.floor(hoverIndex / 10) * 50}
-          left={(hoverIndex % 10) * 50}
+          top={Math.floor(hoverIndex / 7) * 65}
+          left={(hoverIndex % 7) * 65}
           horizontal={horizontal}
           currentShip={currentShip}
           onClick={() => placeShip(hoverIndex)}

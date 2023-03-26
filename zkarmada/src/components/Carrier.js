@@ -7,8 +7,8 @@ import Img5 from "../images/vector-of-aircraft-carriers (5).png";
 const Carrier = (props) => {
   const size = props.size;
   const shipStyles = {
-    width: `${size * 45 + (size - 1) * 5}px`,
-    height: `45px`,
+    width: `${size * 60 + (size - 1) * 5}px`,
+    height: `60px`,
   };
   let image = Img2;
   if (size == 3) {

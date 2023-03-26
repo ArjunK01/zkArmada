@@ -5,6 +5,14 @@ import { useMetaMask } from "metamask-react";
 
 import styled from "styled-components";
 
+import img from "./images/battleship-background.png";
+import Home from "./Home";
+
+const Outer = styled.div`
+  background-image: url(${img});
+  min-height: 100vh;
+`;
+
 const Container = styled.div`
   max-width: 1100px;
   margin: 0px auto;
@@ -20,29 +28,19 @@ const Header = styled.div`
   text-align: center;
 `;
 function App() {
-  const { status, connect, account, chainId, ethereum } = useMetaMask();
-  if (status === "initializing")
-    return <div>Synchronisation with MetaMask ongoing...</div>;
-
-  if (status === "unavailable") return <div>MetaMask not available :(</div>;
-
-  if (status === "notConnected")
-    return <button onClick={connect}>Connect to MetaMask</button>;
-
-  if (status === "connecting") return <div>Connecting...</div>;
-
-  if (status === "connected")
-    return (
+  return (
+    <Outer>
       <Container>
         <GamesContextProvider>
-          <Header>zkArmada</Header>
-          <div>
-            Connected account {account} on chain ID {chainId}
-          </div>
-          <MainSection />
+          {/* <div>
+              Connected account {account} on chain ID {chainId}
+            </div> */}
+          {/* <MainSection /> */}
+          <Home />
         </GamesContextProvider>
       </Container>
-    );
+    </Outer>
+  );
 }
 
 export default App;

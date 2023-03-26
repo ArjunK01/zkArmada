@@ -5,11 +5,14 @@ import { GamesContext, gameStates } from "../GameContext.js";
 import styled from "styled-components";
 import ShipPicker from "./ShipPicker";
 import Carrier from "./Carrier";
+import OtherBoard from "./OtherBoard";
 
+import img from "../images/bkg.png";
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
   gap: 50px;
+  border-radius: 30px;
 `;
 
 const MainSection = () => {
@@ -38,7 +41,7 @@ const MainSection = () => {
       let p = index;
       for (let i = 0; i < currentShip; i++) {
         k.add(p);
-        p += 10;
+        p += 7;
       }
     }
     setTakenIndexes(k);
@@ -74,7 +77,7 @@ const MainSection = () => {
           availableShips={availableShips}
         />
       ) : (
-        <Board info={otherBoard} />
+        <OtherBoard info={otherBoard} />
       )}
     </Container>
   );
