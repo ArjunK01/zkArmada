@@ -82,38 +82,52 @@ const GamesContextProvider = (props) => {
     return result;
   }
 
-  const [hashUserBoard, setHashUserBoard] = useState(null);
-  const [myencrypted, setmyencrypted] = useState([]);
-
-  useEffect(() => {
-    if (!userBoard) return;
-    let arr = [];
-    let arrKeys = [];
-    console.log(userBoard);
-    //ENCRYPTION STUFF
+  //check if the userBoard is the same as the encrypted board
+  function validateFinalBoardState(userBoard, myencrypted, hashUserBoard) {
+    //check if the userBoard is the same as the encrypted board
     for (let i = 0; i < 49; i++) {
-      arrKeys.push(generateKey());
+      let encrypted = CryptoJS.SHA256(userBoard[i] + hashUserBoard[i]).toString();
+      if (encrypted !== myencrypted[i]) {
+        return false;
+      }
     }
+    return true;
+  }
 
-    for (let i = 0; i < 49; i++) {
-      //encrypt each value in the array
-      let encrypted = CryptoJS.SHA256(userBoard[i] + arrKeys[i]).toString();
-      arr.push(encrypted);
-    }
-    //take a 7x7 array of random keys, encrypt the values at each index in the array, and then store the encyrpted values in their own array
-    setmyencrypted(arr);
-    setHashUserBoard(arrKeys);
+}
 
-    console.log(arr);
-  }, [userBoard]);
+const [hashUserBoard, setHashUserBoard] = useState(null);
+const [myencrypted, setmyencrypted] = useState([]);
 
-  return (
-    <GamesContext.Provider
-      value={{ otherBoard, userBoard, gameState, connect, sendmsg, setBoard }}
-    >
-      {props.children}
-    </GamesContext.Provider>
-  );
+useEffect(() => {
+  if (!userBoard) return;
+  let arr = [];
+  let arrKeys = [];
+  console.log(userBoard);
+  //ENCRYPTION STUFF
+  for (let i = 0; i < 49; i++) {
+    arrKeys.push(generateKey());
+  }
+
+  for (let i = 0; i < 49; i++) {
+    //encrypt each value in the array
+    let encrypted = CryptoJS.SHA256(userBoard[i] + arrKeys[i]).toString();
+    arr.push(encrypted);
+  }
+  //take a 7x7 array of random keys, encrypt the values at each index in the array, and then store the encyrpted values in their own array
+  setmyencrypted(arr);
+  setHashUserBoard(arrKeys);
+
+  console.log(arr);
+}, [userBoard]);
+
+return (
+  <GamesContext.Provider
+    value={{ otherBoard, userBoard, gameState, connect, sendmsg, setBoard }}
+  >
+    {props.children}
+  </GamesContext.Provider>
+);
 };
 
 export default GamesContextProvider;
