@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import Peer from "peerjs";
+import CryptoJS from "crypto-js";
 export const GamesContext = createContext();
 
 const default_board = new Array(49).fill(0);
@@ -98,14 +99,42 @@ const GamesContextProvider = (props) => {
     setUserBoard(arr);
   };
 
+  //generate random 8 letter key
+  function generateKey() {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < 8) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+  }
+
+  const [hashUserBoard, setHashUserBoard] = useState(null);
   const [myencrypted, setmyencrypted] = useState([]);
 
   useEffect(() => {
     if (!userBoard) return;
     let arr = [];
+    let arrKeys = [];
+    console.log(userBoard);
     //ENCRYPTION STUFF
+    for (let i = 0; i < 49; i++) {
+      arrKeys.push(generateKey());
+    }
 
+    for (let i = 0; i < 49; i++) {
+      //encrypt each value in the array
+      let encrypted = CryptoJS.SHA256(userBoard[i] + arrKeys[i]).toString();
+      arr.push(encrypted);
+    }
+    //take a 7x7 array of random keys, encrypt the values at each index in the array, and then store the encyrpted values in their own array
     setmyencrypted(arr);
+    setHashUserBoard(arrKeys);
+
+    console.log(arr);
   }, [userBoard]);
 
   return (
