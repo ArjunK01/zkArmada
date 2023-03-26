@@ -17,12 +17,15 @@ const GamesContextProvider = (props) => {
 
   const [gameState, setGameState] = useState(gameStates.your_turn);
 
+  const [conn,setConn]=useState()
+
   var peer= new Peer()
 
   const connect = (id) => {
     //const socket = new WebSocket(`ws://${ip}:8080`); // Replace the port number if necessary
     var conn = peer.connect(id);
     // on open will be launch when you successfully connect to PeerServer
+    setConn(conn)
     conn.on('open', function(){
       // here you have conn.id
       conn.send('hi!');
@@ -35,6 +38,9 @@ const GamesContextProvider = (props) => {
     })
 
     peer.on('connection', function(conn) {
+      if(!conn){
+        setConn(conn)
+      }
       conn.on('data', function(data){
         console.log(data);
       });
