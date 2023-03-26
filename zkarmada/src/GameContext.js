@@ -21,7 +21,7 @@ export const gameStates = {
 const gameObject={
   player1_encrypted_board:new Array(49).fill(0),
   player2_encrypted_board:new Array(49).fill(0),
-  requestingKey:(false,0),
+  requestingKeyIndex:0,
   player_turn:1,
   player1_revealed_board:new Array(49).fill(0),
   player2_revealed_board:new Array(49).fill(0),
@@ -75,13 +75,29 @@ const GamesContextProvider = (props) => {
         
         setGameState(tGameObject.game_state)
         if(tGameObject.game_state==player2_choosing_ships){
-          tGameObject.player2_encrypted_board=encryptOrHash(userBoard)
+          tGameObject.player2_encrypted_board=myencrypted
           tGameObject.game_state=gameStates.player1_turn
           tGameObject.player_turn=1
-        }else if(gameObject.game_state==gameStates.player2_to_give_keys && tGameObject.requestingKey[0]==true){
-          tGameObject.key=userKeys[tGameObject.requestingKey[1]]
-          tGameObject.game=gameStates.player1_receiving_key
+        }else if(gameObject.game_state==gameStates.player2_to_give_keys){
+          tGameObject.key=hashUserBoard[tGameObject.requestingKeyIndex]
+          tGameObject.game_state=gameStates.player1_receiving_key
           tempGameObject.player_turn=1
+        }else if(gameObject.gameState==gameStates.player2_receiving_key){
+          value=decrypt(tGameObject.player1_encrypted_board[tGameObject.requestingKeyIndex],tGameObject.key)
+          if(value<0){
+            cheating
+          }else if(value==0){
+            tGameObject.player1_revealed_board[tGameObject.requestingKeyIndex]=2
+          }else{
+            tGameObject.player1_revealed_board[tGameObject.requestingKeyIndex]=1
+          }
+          tGameObject.game_state=gameStates.player1_turn
+          tGameObject.player_turn=1
+        }else if(gameObject.gameState==gameStates.player2_turn){
+          //retrieve guess index from front end
+          tGameObject.requestingKeyIndex=index
+          tGameObject.game_state=gameStates.player1_to_give_keys
+          tGameObject.player_turn=1
         }
 
         setGameObject(tGameObject)
