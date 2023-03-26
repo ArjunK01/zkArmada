@@ -18,6 +18,8 @@ const GamesContextProvider = (props) => {
 
   const [gameState, setGameState] = useState(gameStates.your_turn);
 
+  const [player1, setPlayer1] = useState(false);
+
   const [currentGameData, setCurrentGameData] = useState({});
 
   var peer = new Peer();
@@ -33,6 +35,7 @@ const GamesContextProvider = (props) => {
       // here you have conn.id
       conn.send("hi!");
       setGameState(gameStates.choosing_ships);
+      setPlayer1(true);
     });
     conn.on("data", function (data) {
       //WHERE PLAYER 1 is GETTING DATA
